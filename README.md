@@ -7,12 +7,13 @@ This script is a part of the [Feather Panel](https://github.com/FeatherPanel/Fea
 ## Usage
 
 ```bash
-./mrpack-install.sh <json_file> [output_dir] [side]
+./mrpack-install.sh <json_file> [output_dir] [side] [auto_delete]
 ```
 
 -   `<json_file>`: The JSON file containing information about the modpack.
 -   `[output_dir]` (optional): The directory where the modpack will be installed. If not provided, the current directory will be used.
 -   `[side]` (optional): The side (client or server) for which the modpack will be installed. If not provided, the client side will be used.
+-   `[auto_delete]` (optional): Whether or not to automatically delete the modpack json file and overrides folder after installation. If not provided, the modpack will not be deleted.
 
 ## Prerequisites
 
@@ -42,7 +43,7 @@ This script is a part of the [Feather Panel](https://github.com/FeatherPanel/Fea
 ## Example
 
 ```bash
-./install_modpack.sh modrinth.index.json /path/to/installation/directory server
+./install_modpack.sh modrinth.index.json /path/to/installation/directory server true
 ```
 
 ## Modrinth Documentation

@@ -18,6 +18,7 @@ json_file=$1
 output_dir=${2:-.}
 output_dir=${output_dir%/}
 side=${3:-client}
+autodelete=${4:-false}
 
 # Check if file exists
 if [ ! -f $json_file ]; then
@@ -71,6 +72,19 @@ else
 fi
 
 cp -r overrides/* $output_dir
+
+# Auto delete
+if [ $autodelete = "true" ]; then
+    echo "Deleting overrides..."
+    rm -rf overrides
+    rm -rf client-overrides
+    rm -rf server-overrides
+
+    echo "Deleting json file..."
+    rm $json_file
+
+    echo "Done."
+fi
 
 end=$(date +%s)
 echo -e "\n$name installed at $(realpath $output_dir) in $(($end - $start)) seconds."
