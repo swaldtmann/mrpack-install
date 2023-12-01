@@ -4,7 +4,7 @@ start=$(date +%s)
 
 # Check if json file is provided
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 <input_file>"
+    echo "Usage: $0 <input_file> [output_dir] [side] [auto_delete]"
     exit 1
 fi
 
