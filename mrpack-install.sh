@@ -4,7 +4,7 @@ start=$(date +%s)
 
 # Check if json file is provided
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 <json_file>"
+    echo "Usage: $0 <input_file>"
     exit 1
 fi
 
@@ -14,20 +14,35 @@ if ! command -v jq &>/dev/null; then
     exit 1
 fi
 
-json_file=$1
+input_file=$1
 output_dir=${2:-.}
 output_dir=${output_dir%/}
 side=${3:-client}
 autodelete=${4:-false}
 
 # Check if file exists
-if [ ! -f $json_file ]; then
-    echo "The files $json_file does not exist."
+if [ ! -f $input_file ]; then
+    echo "The file $input_file does not exist."
     exit 1
 fi
 
 # Create output dir if it doesn't exist
 mkdir -p $output_dir
+
+if [[ $input_file == modrinth.index.json ]]; then
+    json_file=$input_file
+elif [[ $input_file == *.mrpack ]]; then
+    unzip -q "$input_file" -d .
+    json_file=modrinth.index.json
+
+    if [ ! -f $json_file ]; then
+        echo "The file $input_file is not a valid mrpack file."
+        exit 1
+    fi
+else
+    echo "The file $input_file must be modrinth.index.json or mrpack file."
+    exit 1
+fi
 
 name=$(jq -r '.name' $json_file)
 echo "Installing modpack $name..."
