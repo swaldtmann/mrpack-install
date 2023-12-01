@@ -7,10 +7,10 @@ This script is a part of the [Feather Panel](https://github.com/FeatherPanel/Fea
 ## Usage
 
 ```bash
-./mrpack-install.sh <json_file> [output_dir] [side] [auto_delete]
+./mrpack-install.sh <input_file> [output_dir] [side] [auto_delete]
 ```
 
--   `<json_file>`: The JSON file containing information about the modpack.
+-   `<input_file>`: The modrinth.index.json or .mrpack file.
 -   `[output_dir]` (optional): The directory where the modpack will be installed. If not provided, the current directory will be used.
 -   `[side]` (optional): The side (client or server) for which the modpack will be installed. If not provided, the client side will be used.
 -   `[auto_delete]` (optional): Whether or not to automatically delete the modpack json file and overrides folder after installation. If not provided, the modpack will not be deleted.
@@ -29,7 +29,7 @@ This script is a part of the [Feather Panel](https://github.com/FeatherPanel/Fea
 1. **Check JSON File**: Ensure that a valid JSON file is provided as an argument.
 
     ```bash
-    ./install_modpack.sh <json_file>
+    ./install_modpack.sh <input_file>
     ```
 
 2. **Check jq Installation**: Verify that jq is installed.
