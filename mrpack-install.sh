@@ -19,10 +19,14 @@ output_dir=${2:-.}
 output_dir=${output_dir%/}
 side=${3:-client}
 autodelete=${4:-false}
+silent=${5:-false}
 
 # Check if file exists
 if [ ! -f $input_file ]; then
-    echo "The file $input_file does not exist."
+    echo "An error occurred while installing the modpack."
+    if [ $silent = "false" ]; then
+        echo "The file $input_file does not exist."
+    fi
     exit 1
 fi
 
@@ -36,17 +40,27 @@ elif [[ $input_file == *.mrpack ]]; then
     json_file=modrinth.index.json
 
     if [ ! -f $json_file ]; then
-        echo "The file $input_file is not a valid mrpack file."
+        echo "An error occurred while installing the modpack."
+        if [ $silent = "false" ]; then
+            echo "The file $input_file is not a valid mrpack file."
+        fi
         exit 1
     fi
 else
-    echo "The file $input_file must be modrinth.index.json or mrpack file."
+    echo "An error occurred while installing the modpack."
+    if [ $silent = "false" ]; then
+        echo "The file $input_file must be modrinth.index.json or mrpack file."
+    fi
     exit 1
 fi
 
 name=$(jq -r '.name' $json_file)
-echo "Installing modpack $name..."
-echo "Downloading files..."
+versionId=$(jq -r '.versionId' $json_file)
+
+echo "Installing modpack $name version $versionId..."
+if [ $silent = "false" ]; then
+    echo "Downloading files..."
+fi
 
 # Get the list of downloads and paths
 downloads=($(jq -r '.files[].downloads[0]' $json_file))
@@ -57,7 +71,9 @@ while IFS= read -r line; do
     download=$(echo $line | jq -r '.downloads[0]')
     path=$(echo $line | jq -r '.path')
 
-    echo "Downloading $path..."
+    if [ $silent = "false" ]; then
+        echo "Downloading $path..."
+    fi
 
     # Create the directory if it doesn't exist
     mkdir -p $output_dir/$(dirname $path)
@@ -65,11 +81,15 @@ while IFS= read -r line; do
     # Download the file
     wget -q --show-progress $download -O $output_dir/$path
 
-    echo "Done."
+    if [ $silent = "false" ]; then
+        echo "Done."
+    fi
 done < <(jq -c '.files[]' $json_file)
 
-echo "All downloads completed."
-echo "Copying overrides..."
+if [ $silent = "false" ]; then
+    echo "All downloads completed."
+    echo "Copying overrides..."
+fi
 
 # Copy overrides
 if [ $side = "client" ]; then
@@ -90,15 +110,21 @@ cp -r overrides/* $output_dir
 
 # Auto delete
 if [ $autodelete = "true" ]; then
-    echo "Deleting overrides..."
+    if [ $silent = "false" ]; then
+        echo "Deleting overrides..."
+    fi
     rm -rf overrides
     rm -rf client-overrides
     rm -rf server-overrides
 
-    echo "Deleting json file..."
+    if [ $silent = "false" ]; then
+        echo "Deleting json file..."
+    fi
     rm $json_file
 
-    echo "Done."
+    if [ $silent = "false" ]; then
+        echo "Done."
+    fi
 fi
 
 end=$(date +%s)
