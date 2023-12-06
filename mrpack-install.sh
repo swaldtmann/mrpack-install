@@ -22,7 +22,7 @@ autodelete=${4:-false}
 silent=${5:-false}
 
 # Check if file exists
-if [ ! -f $input_file ]; then
+if [ ! -f "$input_file" ]; then
     echo "An error occurred while installing the modpack."
     if [ $silent = "false" ]; then
         echo "The file $input_file does not exist."
