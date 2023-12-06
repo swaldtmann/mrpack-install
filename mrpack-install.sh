@@ -79,7 +79,11 @@ while IFS= read -r line; do
     mkdir -p $output_dir/$(dirname $path)
 
     # Download the file
-    wget -q --show-progress $download -O $output_dir/$path
+    if [ $silent = "false" ]; then
+        wget -q --show-progress $download -O $output_dir/$path
+    else
+        wget -q $download -O $output_dir/$path &>/dev/null
+    fi
 
     if [ $silent = "false" ]; then
         echo "Done."
