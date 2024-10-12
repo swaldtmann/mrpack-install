@@ -33,7 +33,7 @@ if [ ! -f "$input_file" ]; then
 fi
 
 # Create output dir if it doesn't exist
-mkdir -p $output_dir
+mkdir -p "$output_dir"
 
 if [[ $input_file == modrinth.index.json ]]; then
     json_file=$input_file
@@ -70,15 +70,15 @@ paths=($(jq -r '.files[].path' "$json_file"))
 
 # Loop through the downloads and paths
 while IFS= read -r line; do
-    download=$(echo $line | jq -r '.downloads[0]')
-    path=$(echo $line | jq -r '.path')
+    download=$(echo "$line" | jq -r '.downloads[0]')
+    path=$(echo "$line" | jq -r '.path')
     
     if [ $silent = "false" ]; then
         echo "Downloading $path..."
     fi
     
     # Create the directory if it doesn't exist
-    mkdir -p "$output_dir/$(dirname $path)"
+    mkdir -p "$output_dir"/$(dirname $path)
     
     # Download the file
     if [ $silent = "false" ]; then
