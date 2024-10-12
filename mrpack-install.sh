@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 start=$(date +%s)
 
 # Check if json file is provided
@@ -68,8 +70,8 @@ paths=($(jq -r '.files[].path' "$json_file"))
 
 # Loop through the downloads and paths
 while IFS= read -r line; do
-    download=$(echo "$line" | jq -r '.downloads[0]')
-    path=$(echo "$line" | jq -r '.path')
+    download=$(echo $line | jq -r '.downloads[0]')
+    path=$(echo $line | jq -r '.path')
     
     if [ $silent = "false" ]; then
         echo "Downloading $path..."
