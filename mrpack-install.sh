@@ -35,10 +35,10 @@ mkdir -p $output_dir
 
 if [[ $input_file == modrinth.index.json ]]; then
     json_file=$input_file
-elif [[ $input_file == *.mrpack ]]; then
+    elif [[ $input_file == *.mrpack ]]; then
     unzip -q "$input_file" -d .
     json_file=modrinth.index.json
-
+    
     if [ ! -f $json_file ]; then
         echo "An error occurred while installing the modpack."
         if [ $silent = "false" ]; then
@@ -70,21 +70,21 @@ paths=($(jq -r '.files[].path' $json_file))
 while IFS= read -r line; do
     download=$(echo $line | jq -r '.downloads[0]')
     path=$(echo $line | jq -r '.path')
-
+    
     if [ $silent = "false" ]; then
         echo "Downloading $path..."
     fi
-
+    
     # Create the directory if it doesn't exist
     mkdir -p $output_dir/$(dirname $path)
-
+    
     # Download the file
     if [ $silent = "false" ]; then
         wget -q --show-progress $download -O $output_dir/$path
     else
         wget -q $download -O $output_dir/$path &>/dev/null
     fi
-
+    
     if [ $silent = "false" ]; then
         echo "Done."
     fi
@@ -100,7 +100,7 @@ if [ $side = "client" ]; then
     if [ -d overrides ]; then
         cp -r overrides/* $output_dir
     fi
-
+    
     if [ -d client-overrides ]; then
         cp -r client-overrides/* $output_dir
     fi
@@ -120,12 +120,12 @@ if [ $autodelete = "true" ]; then
     rm -rf overrides
     rm -rf client-overrides
     rm -rf server-overrides
-
+    
     if [ $silent = "false" ]; then
         echo "Deleting json file..."
     fi
     rm $json_file
-
+    
     if [ $silent = "false" ]; then
         echo "Done."
     fi
