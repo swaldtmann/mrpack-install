@@ -14,12 +14,12 @@ if ! command -v jq &>/dev/null; then
     exit 1
 fi
 
-input_file=$1
-output_dir=${2:-.}
-output_dir=${output_dir%/}
-side=${3:-client}
-autodelete=${4:-false}
-silent=${5:-false}
+input_file="$1"
+output_dir="${2:-.}"
+output_dir="${output_dir%/}"
+side="${3:-client}"
+autodelete="${4:-false}"
+silent="${5:-false}"
 
 # Check if file exists
 if [ ! -f "$input_file" ]; then
@@ -39,7 +39,7 @@ if [[ $input_file == modrinth.index.json ]]; then
     unzip -q "$input_file" -d .
     json_file=modrinth.index.json
     
-    if [ ! -f $json_file ]; then
+    if [ ! -f "$json_file" ]; then
         echo "An error occurred while installing the modpack."
         if [ $silent = "false" ]; then
             echo "The file $input_file is not a valid mrpack file."
@@ -54,8 +54,8 @@ else
     exit 1
 fi
 
-name=$(jq -r '.name' $json_file)
-versionId=$(jq -r '.versionId' $json_file)
+name=$(jq -r '.name' "$json_file")
+versionId=$(jq -r '.versionId' "$json_file")
 
 echo "Installing modpack $name version $versionId..."
 if [ $silent = "false" ]; then
@@ -63,32 +63,32 @@ if [ $silent = "false" ]; then
 fi
 
 # Get the list of downloads and paths
-downloads=($(jq -r '.files[].downloads[0]' $json_file))
-paths=($(jq -r '.files[].path' $json_file))
+downloads=($(jq -r '.files[].downloads[0]' "$json_file"))
+paths=($(jq -r '.files[].path' "$json_file"))
 
 # Loop through the downloads and paths
 while IFS= read -r line; do
-    download=$(echo $line | jq -r '.downloads[0]')
-    path=$(echo $line | jq -r '.path')
+    download=$(echo "$line" | jq -r '.downloads[0]')
+    path=$(echo "$line" | jq -r '.path')
     
     if [ $silent = "false" ]; then
         echo "Downloading $path..."
     fi
     
     # Create the directory if it doesn't exist
-    mkdir -p $output_dir/$(dirname $path)
+    mkdir -p "$output_dir/$(dirname $path)"
     
     # Download the file
     if [ $silent = "false" ]; then
-        wget -q --show-progress $download -O $output_dir/$path
+        wget -q --show-progress "$download" -O "$output_dir/$path"
     else
-        wget -q $download -O $output_dir/$path &>/dev/null
+        wget -q "$download" -O "$output_dir/$path" &>/dev/null
     fi
     
     if [ $silent = "false" ]; then
         echo "Done."
     fi
-done < <(jq -c '.files[]' $json_file)
+done < <(jq -c '.files[]' "$json_file")
 
 if [ $silent = "false" ]; then
     echo "All downloads completed."
@@ -98,19 +98,19 @@ fi
 # Copy overrides
 if [ $side = "client" ]; then
     if [ -d overrides ]; then
-        cp -r overrides/* $output_dir
+        cp -r overrides/* "$output_dir"
     fi
     
     if [ -d client-overrides ]; then
-        cp -r client-overrides/* $output_dir
+        cp -r client-overrides/* "$output_dir"
     fi
 else
     if [ -d server-overrides ]; then
-        cp -r server-overrides/* $output_dir
+        cp -r server-overrides/* "$output_dir"
     fi
 fi
 
-cp -r overrides/* $output_dir
+cp -r overrides/* "$output_dir"
 
 # Auto delete
 if [ $autodelete = "true" ]; then
